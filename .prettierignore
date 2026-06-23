@@ -1,0 +1,8 @@
+/vendor
+/node_modules
+/public
+/storage
+bootstrap/ssr
+
+# Ignore Blade views completely to keep PHP blocks intact
+resources/views/**/*.blade.php
