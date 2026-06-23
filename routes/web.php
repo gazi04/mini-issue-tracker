@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\IssueController;
+use App\Http\Controllers\IssueMemberController;
+use App\Http\Controllers\IssueTagController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,6 +21,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('projects', ProjectController::class);
+
+    Route::get('issues/search', [IssueController::class, 'search'])->name('issues.search');
+    Route::resource('issues', IssueController::class);
+
+    Route::get('tags', [TagController::class, 'index'])->name('tags.index');
+    Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+
+    Route::post('issues/{issue}/tags', [IssueTagController::class, 'store'])->name('issues.tags.store');
+    Route::delete('issues/{issue}/tags/{tag}', [IssueTagController::class, 'destroy'])->name('issues.tags.destroy');
+
+    Route::get('issues/{issue}/comments', [CommentController::class, 'index'])->name('issues.comments.index');
+    Route::post('issues/{issue}/comments', [CommentController::class, 'store'])->name('issues.comments.store');
+
+    Route::post('issues/{issue}/members', [IssueMemberController::class, 'store'])->name('issues.members.store');
+    Route::delete('issues/{issue}/members/{user}', [IssueMemberController::class, 'destroy'])->name('issues.members.destroy');
 });
 
 require __DIR__.'/auth.php';
