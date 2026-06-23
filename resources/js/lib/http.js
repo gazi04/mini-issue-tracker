@@ -26,3 +26,21 @@ async function request(url, method, body) {
 export const getJson = (url) => request(url, 'GET');
 export const postJson = (url, body) => request(url, 'POST', body);
 export const deleteJson = (url) => request(url, 'DELETE');
+
+/**
+ * Fetch an HTML fragment (server renders a Blade partial when the request is AJAX).
+ */
+export async function getHtml(url) {
+    const response = await fetch(url, {
+        headers: {
+            Accept: 'text/html',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    });
+
+    if (!response.ok) {
+        throw { status: response.status };
+    }
+
+    return response.text();
+}

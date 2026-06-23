@@ -11,7 +11,6 @@ use App\Models\Project;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,6 +25,10 @@ class IssueController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        if ($request->ajax()) {
+            return view('issues._results', ['issues' => $issues]);
+        }
+
         return view('issues.index', [
             'issues' => $issues,
             'tags' => Tag::query()->orderBy('name')->get(),
@@ -33,29 +36,6 @@ class IssueController extends Controller
             'priorities' => IssuePriority::cases(),
             'filters' => $request->only(['status', 'priority', 'tag', 'q']),
         ]);
-    }
-
-    public function search(Request $request): JsonResponse
-    {
-        $issues = $this->filteredQuery($request)
-            ->with(['project', 'tags'])
-            ->latest()
-            ->limit(25)
-            ->get()
-            ->map(fn (Issue $issue): array => [
-                'id' => $issue->id,
-                'title' => $issue->title,
-                'status' => $issue->status->value,
-                'priority' => $issue->priority->value,
-                'project' => $issue->project->name,
-                'url' => route('issues.show', $issue),
-                'tags' => $issue->tags->map(fn (Tag $tag): array => [
-                    'name' => $tag->name,
-                    'color' => $tag->color,
-                ])->all(),
-            ]);
-
-        return response()->json(['data' => $issues]);
     }
 
     public function create(Request $request): View

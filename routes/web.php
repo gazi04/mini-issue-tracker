@@ -26,7 +26,6 @@ Route::middleware('auth')->group(function (): void {
 
     Route::resource('projects', ProjectController::class);
 
-    Route::get('issues/search', [IssueController::class, 'search'])->name('issues.search');
     Route::resource('issues', IssueController::class);
 
     Route::controller(TagController::class)->name('tags.')->group(function (): void {
