@@ -1,8 +1,8 @@
 import Alpine from 'alpinejs';
 
-import initIssueShow from './issue-show';
-import initIssueSearch from './issue-search';
-import initTagCreate from './tags';
+import initIssueShow from './features/issue-show';
+import initIssueSearch from './features/issue-search';
+import initTagCreate from './features/tag-create';
 
 window.Alpine = Alpine;
 

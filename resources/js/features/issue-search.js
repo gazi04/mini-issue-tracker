@@ -1,5 +1,5 @@
-import { getJson } from './http';
-import { escapeHtml } from './issue-show';
+import { getJson } from '../lib/http';
+import { escapeHtml } from '../lib/dom';
 
 export default function initIssueSearch() {
     const input = document.getElementById('issue-search');

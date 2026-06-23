@@ -1,5 +1,5 @@
-import { postJson } from './http';
-import { escapeHtml } from './issue-show';
+import { postJson } from '../lib/http';
+import { escapeHtml } from '../lib/dom';
 
 export default function initTagCreate() {
     const form = document.getElementById('tag-create-form');
