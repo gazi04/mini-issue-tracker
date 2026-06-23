@@ -18,6 +18,7 @@ class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
+
     /**
      * @return array<string, string>
      */

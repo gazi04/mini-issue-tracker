@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\IssueMemberController;
@@ -12,11 +9,13 @@ use App\Http\Controllers\IssueTagController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TagController;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn(): Factory|View => view('welcome'));
+Route::get('/', fn (): Factory|View => view('welcome'));
 
-Route::get('/dashboard', fn(): Factory|View => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', fn (): Factory|View => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function (): void {
     Route::controller(ProfileController::class)->name('profile.')->group(function (): void {
