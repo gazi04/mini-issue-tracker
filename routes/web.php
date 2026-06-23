@@ -18,26 +18,38 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::controller(ProfileController::class)->name('profile.')->group(function () {
+        Route::get('/profile', 'edit')->name('edit');
+        Route::patch('/profile', 'update')->name('update');
+        Route::delete('/profile', 'destroy')->name('destroy');
+    });
 
     Route::resource('projects', ProjectController::class);
 
     Route::get('issues/search', [IssueController::class, 'search'])->name('issues.search');
     Route::resource('issues', IssueController::class);
 
-    Route::get('tags', [TagController::class, 'index'])->name('tags.index');
-    Route::post('tags', [TagController::class, 'store'])->name('tags.store');
+    Route::controller(TagController::class)->name('tags.')->group(function () {
+        Route::get('tags', 'index')->name('index');
+        Route::post('tags', 'store')->name('store');
+    });
 
-    Route::post('issues/{issue}/tags', [IssueTagController::class, 'store'])->name('issues.tags.store');
-    Route::delete('issues/{issue}/tags/{tag}', [IssueTagController::class, 'destroy'])->name('issues.tags.destroy');
+    Route::prefix('issues/{issue}')->name('issues.')->group(function (): void {
+        Route::prefix('tags')->name('tags.')->controller(IssueTagController::class)->group(function () {
+            Route::post('/', 'store')->name('store');
+            Route::delete('{tag}', 'destroy')->name('destroy');
+        });
 
-    Route::get('issues/{issue}/comments', [CommentController::class, 'index'])->name('issues.comments.index');
-    Route::post('issues/{issue}/comments', [CommentController::class, 'store'])->name('issues.comments.store');
+        Route::prefix('comments')->controller(CommentController::class)->name('comments.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+        });
 
-    Route::post('issues/{issue}/members', [IssueMemberController::class, 'store'])->name('issues.members.store');
-    Route::delete('issues/{issue}/members/{user}', [IssueMemberController::class, 'destroy'])->name('issues.members.destroy');
+        Route::prefix('members')->controller(IssueMemberController::class)->name('members.')->group(function () {
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{user}', 'destroy')->name('destroy');
+        });
+    });
 });
 
 require __DIR__.'/auth.php';
