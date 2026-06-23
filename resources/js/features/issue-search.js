@@ -18,7 +18,9 @@ export default function initIssueSearch() {
             const { data } = await getJson(url);
 
             pagination?.classList.add('hidden');
-            list.innerHTML = data.length ? data.map(rowMarkup).join('') : '<p class="py-3 text-gray-500">No issues match.</p>';
+            list.innerHTML = data.length
+                ? data.map(rowMarkup).join('')
+                : '<p class="py-3 text-gray-500">No issues match.</p>';
         }, 300);
     });
 }
