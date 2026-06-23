@@ -12,18 +12,18 @@ class TagController extends Controller
 {
     public function index(Request $request): View|JsonResponse
     {
-        $tags = Tag::orderBy('name')->get();
+        $tags = Tag::query()->orderBy('name')->get();
 
         if ($request->wantsJson()) {
             return response()->json(['data' => $tags]);
         }
 
-        return view('tags.index', compact('tags'));
+        return view('tags.index', ['tags' => $tags]);
     }
 
     public function store(StoreTagRequest $request): JsonResponse
     {
-        $tag = Tag::create($request->validated());
+        $tag = Tag::query()->create($request->validated());
 
         return response()->json(['data' => $tag], 201);
     }

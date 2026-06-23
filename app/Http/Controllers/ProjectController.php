@@ -18,7 +18,7 @@ class ProjectController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('projects.index', compact('projects'));
+        return view('projects.index', ['projects' => $projects]);
     }
 
     public function create(): View
@@ -28,13 +28,12 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request): RedirectResponse
     {
-        $project = Project::create([
+        $project = Project::query()->create([
             ...$request->validated(),
             'user_id' => $request->user()->id,
         ]);
 
-        return redirect()
-            ->route('projects.show', $project)
+        return to_route('projects.show', $project)
             ->with('status', 'Project created.');
     }
 
@@ -42,14 +41,14 @@ class ProjectController extends Controller
     {
         $project->load(['owner', 'issues' => fn ($query) => $query->latest()]);
 
-        return view('projects.show', compact('project'));
+        return view('projects.show', ['project' => $project]);
     }
 
     public function edit(Project $project): View
     {
         $this->authorize('update', $project);
 
-        return view('projects.edit', compact('project'));
+        return view('projects.edit', ['project' => $project]);
     }
 
     public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
@@ -58,8 +57,7 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        return redirect()
-            ->route('projects.show', $project)
+        return to_route('projects.show', $project)
             ->with('status', 'Project updated.');
     }
 
@@ -69,8 +67,7 @@ class ProjectController extends Controller
 
         $project->delete();
 
-        return redirect()
-            ->route('projects.index')
+        return to_route('projects.index')
             ->with('status', 'Project deleted.');
     }
 }

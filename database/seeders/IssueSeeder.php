@@ -16,8 +16,8 @@ class IssueSeeder extends Seeder
      */
     public function run(): void
     {
-        $tagIds = Tag::pluck('id');
-        $userIds = User::pluck('id');
+        $tagIds = Tag::query()->pluck('id');
+        $userIds = User::query()->pluck('id');
 
         Project::all()->each(function (Project $project) use ($tagIds, $userIds): void {
             Issue::factory()

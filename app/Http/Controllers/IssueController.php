@@ -28,7 +28,7 @@ class IssueController extends Controller
 
         return view('issues.index', [
             'issues' => $issues,
-            'tags' => Tag::orderBy('name')->get(),
+            'tags' => Tag::query()->orderBy('name')->get(),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
             'filters' => $request->only(['status', 'priority', 'tag', 'q']),
@@ -61,7 +61,7 @@ class IssueController extends Controller
     public function create(Request $request): View
     {
         return view('issues.create', [
-            'projects' => Project::orderBy('name')->get(),
+            'projects' => Project::query()->orderBy('name')->get(),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
             'selectedProjectId' => $request->integer('project_id') ?: null,
@@ -70,10 +70,9 @@ class IssueController extends Controller
 
     public function store(StoreIssueRequest $request): RedirectResponse
     {
-        $issue = Issue::create($request->validated());
+        $issue = Issue::query()->create($request->validated());
 
-        return redirect()
-            ->route('issues.show', $issue)
+        return to_route('issues.show', $issue)
             ->with('status', 'Issue created.');
     }
 
@@ -83,8 +82,8 @@ class IssueController extends Controller
 
         return view('issues.show', [
             'issue' => $issue,
-            'allTags' => Tag::orderBy('name')->get(),
-            'allUsers' => User::orderBy('name')->get(),
+            'allTags' => Tag::query()->orderBy('name')->get(),
+            'allUsers' => User::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -92,7 +91,7 @@ class IssueController extends Controller
     {
         return view('issues.edit', [
             'issue' => $issue,
-            'projects' => Project::orderBy('name')->get(),
+            'projects' => Project::query()->orderBy('name')->get(),
             'statuses' => IssueStatus::cases(),
             'priorities' => IssuePriority::cases(),
         ]);
@@ -102,8 +101,7 @@ class IssueController extends Controller
     {
         $issue->update($request->validated());
 
-        return redirect()
-            ->route('issues.show', $issue)
+        return to_route('issues.show', $issue)
             ->with('status', 'Issue updated.');
     }
 
@@ -111,8 +109,7 @@ class IssueController extends Controller
     {
         $issue->delete();
 
-        return redirect()
-            ->route('issues.index')
+        return to_route('issues.index')
             ->with('status', 'Issue deleted.');
     }
 
@@ -125,8 +122,8 @@ class IssueController extends Controller
             ->when($request->filled('q'), function (Builder $query) use ($request): void {
                 $term = $request->string('q');
                 $query->where(fn (Builder $inner) => $inner
-                    ->where('title', 'like', "%{$term}%")
-                    ->orWhere('description', 'like', "%{$term}%"));
+                    ->where('title', 'like', sprintf('%%%s%%', $term))
+                    ->orWhere('description', 'like', sprintf('%%%s%%', $term)));
             });
     }
 }

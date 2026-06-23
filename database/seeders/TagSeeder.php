@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Tag;
@@ -22,7 +24,7 @@ class TagSeeder extends Seeder
         ];
 
         foreach ($tags as $name => $color) {
-            Tag::firstOrCreate(['name' => $name], ['color' => $color]);
+            Tag::query()->firstOrCreate(['name' => $name], ['color' => $color]);
         }
     }
 }
